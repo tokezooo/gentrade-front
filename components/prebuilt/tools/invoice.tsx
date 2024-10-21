@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 import { format } from "date-fns";
 
 export type LineItem = {
@@ -271,7 +271,7 @@ export function Invoice(props: InvoiceProps): JSX.Element {
           <ul className="grid gap-3">
             {props.lineItems.map((lineItem) => {
               const totalPrice = (lineItem.price * lineItem.quantity).toFixed(
-                2,
+                2
               );
               return (
                 <li

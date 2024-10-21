@@ -1,19 +1,19 @@
+import "server-only";
 import { RemoteRunnable } from "@langchain/core/runnables/remote";
 import { exposeEndpoints, streamRunnableUI } from "@/utils/server";
-import "server-only";
 import { StreamEvent } from "@langchain/core/tracers/log_stream";
 import { EventHandlerFields } from "@/utils/server";
-import { Github, GithubLoading } from "@/components/prebuilt/github";
-import { InvoiceLoading, Invoice } from "@/components/prebuilt/invoice";
+import { Github, GithubLoading } from "@/components/prebuilt/tools/github";
+import { InvoiceLoading, Invoice } from "@/components/prebuilt/tools/invoice";
 import { auth } from "@clerk/nextjs/server";
 import {
   CurrentWeatherLoading,
   CurrentWeather,
-} from "@/components/prebuilt/weather";
+} from "@/components/prebuilt/tools/weather";
 import { createStreamableUI, createStreamableValue } from "ai/rsc";
-import { AIMessage } from "@/ai/message";
+import { AIMessage } from "@/components/prebuilt/ai/message";
 
-const API_URL = "http://localhost:8080/chat";
+const API_URL = "http://localhost:8000/chat";
 
 type ToolComponent = {
   loading: (props?: any) => JSX.Element;

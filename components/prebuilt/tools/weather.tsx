@@ -1,9 +1,9 @@
 "use client";
 
-import { Card } from "../ui/card";
+import { Card } from "../../ui/card";
 import { format } from "date-fns";
-import { Progress } from "../ui/progress";
-import { Skeleton } from "../ui/skeleton";
+import { Progress } from "../../ui/progress";
+import { Skeleton } from "../../ui/skeleton";
 
 export interface CurrentWeatherProps {
   temperature: number;

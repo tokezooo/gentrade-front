@@ -7,6 +7,7 @@ import { EndpointsContext } from "@/app/agent";
 import { useActions } from "@/utils/client";
 import { LocalContext } from "@/app/shared";
 import { HumanMessageText } from "./message";
+import { ArrowUpIcon } from "lucide-react";
 
 export default function Chat() {
   const actions = useActions<typeof EndpointsContext>();
@@ -48,7 +49,10 @@ export default function Chat() {
             ["human", input],
             [
               "ai",
-              `Tool result: ${JSON.stringify(lastEvent[1].invoke_tools.tool_result, null)}`,
+              `Tool result: ${JSON.stringify(
+                lastEvent[1].invoke_tools.tool_result,
+                null
+              )}`,
             ],
           ]);
         } else {
@@ -68,27 +72,32 @@ export default function Chat() {
   }
 
   return (
-    <div className="w-[70vw] h-[80vh] flex flex-col gap-2 mx-auto border-[1px] border-gray-200 rounded-lg p-3 shadow-sm bg-gray-50/25">
-      <div className="w-full min-h-[70vh] overflow-y-scroll flex flex-col gap-4">
+    <div className="w-[80vw] h-[80vh] flex flex-col gap-3 justify-between mx-auto border-[1px] border-gray-200 dark:border-gray-800 rounded-lg p-3 shadow-sm bg-gray-50/25 dark:bg-gray-900/25">
+      <div className="w-full min-h-[65vh] overflow-y-scroll flex flex-col">
         <LocalContext.Provider value={onSubmit}>
           <div className="flex flex-col w-full gap-1 mt-auto">{elements}</div>
         </LocalContext.Provider>
       </div>
-      <form
-        onSubmit={async (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          await onSubmit(input);
-        }}
-        className="w-full flex flex-row gap-2"
-      >
-        <Input
-          placeholder="What's the weather like in San Francisco?"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <Button type="submit">Send</Button>
-      </form>
+      <div className="w-full flex flex-row">
+        <form
+          onSubmit={async (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            await onSubmit(input);
+          }}
+          className="w-full flex flex-row gap-2"
+        >
+          <Input
+            placeholder="Your prompt here"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="dark:bg-gray-900/50 dark:text-white"
+          />
+          <Button type="submit">
+            <ArrowUpIcon />
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
