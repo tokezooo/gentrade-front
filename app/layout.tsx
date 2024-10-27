@@ -1,10 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { EndpointsContext } from "./agent";
+import { dark } from "@clerk/themes";
 import { ReactNode } from "react";
-import Header from "@/components/prebuilt/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import Header from "@/components/custom/header";
 
 export const metadata: Metadata = {
   title: "GenTrade",
@@ -13,16 +13,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout(props: { children: ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
-        <body>
+        <body className="antialiased bg-sidebar">
           <ThemeProvider attribute="class" defaultTheme="system">
-            <div className="flex flex-col p-4 md:p-8 h-[100vh]">
-              <EndpointsContext>
-                <Header />
-                {props.children}
-              </EndpointsContext>
-            </div>
+            {/* <div className="flex flex-col items-center h-dvh bg-background w-full"> */}
+            {/* <Header /> */}
+            {props.children}
+            {/* </div> */}
           </ThemeProvider>
         </body>
       </html>
