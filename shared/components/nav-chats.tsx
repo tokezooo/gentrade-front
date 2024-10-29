@@ -1,0 +1,103 @@
+"use client";
+
+import {
+  Folder,
+  Loader2,
+  MessageCircle,
+  MessagesSquare,
+  MoreHorizontal,
+  Plus,
+  Share,
+  Trash2,
+  type LucideIcon,
+} from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import {
+  SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/shared/components/ui/sidebar";
+import Link from "next/link";
+import { useUserChatStore } from "@/shared/store/chat-store";
+
+export function NavChats() {
+  const { currentUserChat, userChatList } = useUserChatStore();
+  const { isMobile } = useSidebar();
+
+  return (
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel>
+        <MessagesSquare className="mr-2" />
+        <span>Chats</span>
+      </SidebarGroupLabel>
+      <SidebarGroupAction title="New chat">
+        <Link href="/chat">
+          <Plus width={18} height={18} />
+          <span className="sr-only">New chat</span>
+        </Link>
+      </SidebarGroupAction>
+      <SidebarMenu>
+        {userChatList?.length === 0 && (
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              disabled
+              className="hover:bg-transparent hover:text-muted-foreground text-muted-foreground text-sm"
+            >
+              <span>No chats yet</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        )}
+        {userChatList.map((item) => (
+          <SidebarMenuItem key={item.thread_id}>
+            <SidebarMenuButton
+              asChild
+              isActive={currentUserChat?.thread_id === item.thread_id}
+            >
+              <Link href={`/chat/${item.thread_id}`}>
+                {/* <item.icon /> */}
+                <span>{item.thread_id}</span>
+              </Link>
+            </SidebarMenuButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuAction showOnHover>
+                  <MoreHorizontal />
+                  <span className="sr-only">More</span>
+                </SidebarMenuAction>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-48"
+                side={isMobile ? "bottom" : "right"}
+                align={isMobile ? "end" : "start"}
+              >
+                <DropdownMenuItem className="cursor-pointer text-red-500 dark:text-red-400">
+                  <Trash2 />
+                  <span>Delete chat</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        ))}
+        {/* <SidebarMenuItem>
+          <SidebarMenuButton>
+            <MoreHorizontal />
+            <span>More</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem> */}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
+}

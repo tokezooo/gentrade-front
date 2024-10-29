@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { ReactNode } from "react";
-import { ThemeProvider } from "@/components/theme-provider";
-import Header from "@/components/custom/header";
+import { ThemeProvider } from "@/shared/components/theme-provider";
+import { QueryClientProviderWrapper } from "../shared/lib/use-query/query-client-provider-wrapper";
 
 export const metadata: Metadata = {
   title: "GenTrade",
@@ -19,7 +19,10 @@ export default function RootLayout(props: { children: ReactNode }) {
           <ThemeProvider attribute="class" defaultTheme="system">
             {/* <div className="flex flex-col items-center h-dvh bg-background w-full"> */}
             {/* <Header /> */}
-            {props.children}
+            <QueryClientProviderWrapper>
+              {props.children}
+            </QueryClientProviderWrapper>
+            {/* {props.children} */}
             {/* </div> */}
           </ThemeProvider>
         </body>
