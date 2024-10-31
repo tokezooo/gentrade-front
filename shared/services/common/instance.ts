@@ -7,7 +7,7 @@ let axiosInstance: AxiosInstance | null = null;
 
 export const getInstance = async (): Promise<AxiosInstance> => {
   if (!axiosInstance) {
-    const { getToken } = auth();
+    const { getToken } = await auth();
     const token = await getToken();
 
     axiosInstance = axios.create({

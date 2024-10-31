@@ -1,9 +1,7 @@
 import { convertToCoreMessages, Message, streamText } from "ai";
 import { RemoteRunnable } from "langchain/runnables/remote";
-import { LangChainAdapterCustom } from "ai/streams";
+import { LangChainAdapter } from "ai";
 import { auth } from "@clerk/nextjs/server";
-
-import { z } from "zod";
 
 // import { customModel } from "@/ai";
 // import { deleteChatById, getChatById, saveChat } from "@/db/queries";
@@ -12,7 +10,7 @@ export async function POST(request: Request) {
   const { id, messages }: { id: string; messages: Array<Message> } =
     await request.json();
 
-  const { getToken } = auth();
+  const { getToken } = await auth();
   const token = await getToken();
 
   const coreMessages = convertToCoreMessages(messages);

@@ -13,7 +13,7 @@ import { User } from "./types/user";
  * @returns The created user ID on null if the user already exists.
  */
 export const createUser = async (): Promise<User | null> => {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (userId) {
     const user = await currentUser();
     const axiosInstance = await getInstance();

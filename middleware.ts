@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const isPublicRoute = createRouteMatcher(["/sign-in", "/sign-up", "/"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (isPublicRoute(req) && userId) {
     return NextResponse.redirect(new URL("/chat", req.url));

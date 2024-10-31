@@ -1,4 +1,3 @@
-"use server";
 import { CoreMessage } from "ai";
 import { redirect } from "next/navigation";
 

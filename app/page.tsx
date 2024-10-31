@@ -3,7 +3,7 @@ import { currentUser, auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 export default async function HomePage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   const user = await currentUser();
 
   return (
