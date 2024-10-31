@@ -29,10 +29,7 @@ export const getUserChats = async (): Promise<ChatListItem[]> => {
  */
 export const addChat = async (chat: ChatAdd): Promise<void> => {
   const axiosInstance = await getInstance();
-  await axiosInstance.post(ApiEndpoints.CHATS, {
-    thread_id: chat.thread_id,
-    messages: chat.messages,
-  });
+  await axiosInstance.post(ApiEndpoints.CHATS, chat);
 };
 
 /**
@@ -42,10 +39,7 @@ export const addChat = async (chat: ChatAdd): Promise<void> => {
  */
 export const updateChat = async (chat: Chat): Promise<void> => {
   const axiosInstance = await getInstance();
-  await axiosInstance.patch(ApiEndpoints.CHATS, {
-    thread_id: chat.thread_id,
-    messages: chat.messages,
-  });
+  await axiosInstance.patch(ApiEndpoints.CHATS, chat);
 };
 
 /**

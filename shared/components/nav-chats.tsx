@@ -70,7 +70,7 @@ export function NavChats() {
             >
               <Link href={`/chat/${item.thread_id}`}>
                 {/* <item.icon /> */}
-                <span>{item.thread_id}</span>
+                <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
             <DropdownMenu>

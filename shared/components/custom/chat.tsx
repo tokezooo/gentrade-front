@@ -38,17 +38,20 @@ export function Chat({ chat }: { chat: ChatType }) {
     setCurrentUserChat(chat);
 
     if (!isLoading && messages.length > 0) {
+      const chatTitle = chat.title || messages[0].content;
       // setRenderMessages([...messages]);
       if (!firstLoad && !isNewChat) {
         mutateUpdateChat({
           thread_id: chat.thread_id,
           messages: [...messages],
+          title: chatTitle,
         });
       } else if (isNewChat) {
         window.history.replaceState({}, "", newPath);
         mutateAddChat({
           thread_id: chat.thread_id,
           messages: [...messages],
+          title: chatTitle,
         });
       }
     }
@@ -91,7 +94,7 @@ export function Chat({ chat }: { chat: ChatType }) {
           className="shrink-0 min-w-[24px] min-h-[24px]"
         />
       </div>
-      <form className="flex mx-auto bg-background pb-4 gap-2 w-full max-w-5xl rounded-xl">
+      <form className="flex mx-auto bg-background pb-4 gap-2 w-full max-w-5xl px-4 rounded-xl">
         <MultimodalInput
           input={input}
           setInput={setInput}

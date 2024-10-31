@@ -20,9 +20,7 @@ const Breadcrumbs = () => {
         <BreadcrumbSeparator className="hidden md:block" />
         <BreadcrumbItem>
           <BreadcrumbPage>
-            {currentChat && currentChat.messages.length > 0
-              ? `${currentChat.thread_id}`
-              : "New chat"}
+            {currentChat ? `${currentChat.title}` : "New chat"}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
