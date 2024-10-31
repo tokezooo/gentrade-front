@@ -9,7 +9,7 @@ import { useScrollToBottom } from "@/shared/components/custom/use-scroll-to-bott
 
 import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
-import { Chat as ChatType } from "@/shared/lib/types";
+import { Chat as ChatType } from "@/shared/services/types/chat";
 import { useUserChats } from "@/shared/hooks/use-user-chats";
 import { useUserChatStore } from "@/shared/store/chat-store";
 import { usePathname } from "next/navigation";
@@ -32,23 +32,18 @@ export function Chat({ chat }: { chat: ChatType }) {
   // Update pathname when new chat is started. Save chat on each new full message received.
   useEffect(() => {
     const newPath = `/chat/${chat.thread_id}`;
+    isNewChat = pathname !== newPath;
 
     setCurrentUserChat(chat);
 
     if (!isLoading && messages.length > 0) {
-      if (pathname !== newPath) {
-        isNewChat = true;
-        window.history.replaceState({}, "", newPath);
-      } else {
-        isNewChat = false;
-      }
-
       if (!firstLoad && !isNewChat) {
         mutateUpdateChat({
           thread_id: chat.thread_id,
           messages: [...messages],
         });
       } else if (isNewChat) {
+        window.history.replaceState({}, "", newPath);
         mutateAddChat({
           thread_id: chat.thread_id,
           messages: [...messages],

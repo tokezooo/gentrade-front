@@ -1,21 +1,16 @@
 import { create } from "zustand";
-import { ChatAddDTO, ChatListItemDTO, ChatDTO } from "../services/dto/chat.dto";
+import { ChatAdd, ChatListItem, Chat } from "../services/types/chat";
 import { API } from "../services/api-client";
 
 interface ChatState {
-  currentUserChat: ChatDTO | null;
-  userChatList: ChatListItemDTO[];
-
-  setCurrentUserChat: (chat: ChatDTO) => void;
-  setUserChatList: (chats: ChatListItemDTO[]) => void;
+  currentUserChat: ChatListItem | null;
+  setCurrentUserChat: (chat: ChatListItem) => void;
 }
 
 export const useUserChatStore = create<ChatState>((set) => ({
   currentUserChat: null,
-  userChatList: [],
   isLoading: false,
   error: false,
 
   setCurrentUserChat: (chat) => set({ currentUserChat: chat }),
-  setUserChatList: (chats) => set({ userChatList: chats }),
 }));

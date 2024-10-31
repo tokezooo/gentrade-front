@@ -2,16 +2,16 @@
 import axios from "axios";
 import { ApiEndpoints } from "./common/constants";
 import { getInstance } from "./common/instance";
-import { ChatDTO, ChatAddDTO, ChatListItemDTO } from "./dto/chat.dto";
+import { Chat, ChatAdd, ChatListItem } from "./types/chat";
 import { convertToCoreMessages } from "ai";
 
 /**
  * Fetches the list of user chats from the API.
  * All user info is fetched from clerk in the axios instance.
  *
- * @returns {Promise<ChatListItemDTO[]>} A promise that resolves to an array of ChatListItem objects.
+ * @returns {Promise<ChatListItem[]>} A promise that resolves to an array of ChatListItem objects.
  */
-export const getUserChats = async (): Promise<ChatListItemDTO[]> => {
+export const getUserChats = async (): Promise<ChatListItem[]> => {
   try {
     const axiosInstance = await getInstance();
     const response = await axiosInstance.get(ApiEndpoints.CHATS);
@@ -27,7 +27,7 @@ export const getUserChats = async (): Promise<ChatListItemDTO[]> => {
  *
  * @param chat The chat data to save
  */
-export const addChat = async (chat: ChatAddDTO): Promise<void> => {
+export const addChat = async (chat: ChatAdd): Promise<void> => {
   const axiosInstance = await getInstance();
   await axiosInstance.post(ApiEndpoints.CHATS, {
     thread_id: chat.thread_id,
@@ -40,7 +40,7 @@ export const addChat = async (chat: ChatAddDTO): Promise<void> => {
  *
  * @param chat The chat data to update
  */
-export const updateChat = async (chat: ChatDTO): Promise<void> => {
+export const updateChat = async (chat: Chat): Promise<void> => {
   const axiosInstance = await getInstance();
   await axiosInstance.patch(ApiEndpoints.CHATS, {
     thread_id: chat.thread_id,
@@ -54,7 +54,7 @@ export const updateChat = async (chat: ChatDTO): Promise<void> => {
  * @param thread_id The ID of the chat thread to fetch
  * @returns The chat data or null if not found
  */
-export const getChat = async (thread_id: string): Promise<ChatDTO | null> => {
+export const getChat = async (thread_id: string): Promise<Chat | null> => {
   try {
     const axiosInstance = await getInstance();
     const response = await axiosInstance.get(
@@ -69,4 +69,15 @@ export const getChat = async (thread_id: string): Promise<ChatDTO | null> => {
     }
     throw error;
   }
+};
+
+/**
+ * Deletes a specific chat by its thread ID.
+ *
+ * @param thread_id The ID of the chat thread to delete
+ * @returns A promise that resolves when the chat is deleted
+ */
+export const deleteChat = async (thread_id: string): Promise<void> => {
+  const axiosInstance = await getInstance();
+  await axiosInstance.delete(`${ApiEndpoints.CHATS}/${thread_id}`);
 };

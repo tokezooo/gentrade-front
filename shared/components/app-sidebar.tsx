@@ -29,8 +29,6 @@ import {
 } from "@/shared/components/ui/sidebar";
 import { NavChats } from "./nav-chats";
 import { NavChatsServer } from "./nav-chats-server";
-import { Suspense } from "react";
-// import { useUserChats } from "../hooks/use-chats";
 
 const data = {
   navMain: [

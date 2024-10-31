@@ -1,5 +1,6 @@
+"use server";
 import { CoreMessage } from "ai";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { Chat } from "@/shared/components/custom/chat";
 import { convertToUIMessages } from "@/shared/lib/utils";
@@ -10,7 +11,7 @@ export default async function Page({ params }: { params: any }) {
   const chatFromDb = await API.chats.getChat(id);
 
   if (!chatFromDb) {
-    notFound();
+    return redirect("/chat");
   }
 
   const chat = {

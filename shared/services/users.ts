@@ -3,7 +3,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { ApiEndpoints } from "./common/constants";
 import { getInstance } from "./common/instance";
-import { UserDTO } from "./dto/user.dto";
+import { User } from "./types/user";
 
 /**
  * Creates a new user in the database using Clerk user info.
@@ -12,7 +12,7 @@ import { UserDTO } from "./dto/user.dto";
  *
  * @returns The created user ID on null if the user already exists.
  */
-export const createUser = async (): Promise<UserDTO | null> => {
+export const createUser = async (): Promise<User | null> => {
   const { userId } = auth();
   if (userId) {
     const user = await currentUser();

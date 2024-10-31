@@ -31,10 +31,12 @@ import {
 } from "@/shared/components/ui/sidebar";
 import Link from "next/link";
 import { useUserChatStore } from "@/shared/store/chat-store";
+import { useUserChats } from "@/shared/hooks/use-user-chats";
 
 export function NavChats() {
-  const { currentUserChat, userChatList } = useUserChatStore();
+  const { currentUserChat } = useUserChatStore();
   const { isMobile } = useSidebar();
+  const { userChatList, mutateDeleteChat } = useUserChats();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -83,7 +85,10 @@ export function NavChats() {
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
-                <DropdownMenuItem className="cursor-pointer text-red-500 dark:text-red-400">
+                <DropdownMenuItem
+                  className="cursor-pointer text-red-500 dark:text-red-400"
+                  onClick={() => mutateDeleteChat(item.thread_id)}
+                >
                   <Trash2 />
                   <span>Delete chat</span>
                 </DropdownMenuItem>

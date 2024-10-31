@@ -1,15 +1,15 @@
 import { Message } from "ai";
 
-export interface ChatAddDTO {
+export interface ChatAdd {
   thread_id: string;
   messages: Array<Message>;
 }
 
-export interface ChatListItemDTO {
+export interface ChatListItem {
   id?: number;
   thread_id: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export interface ChatDTO extends ChatListItemDTO, ChatAddDTO {}
+export interface Chat extends ChatListItem, ChatAdd {}
