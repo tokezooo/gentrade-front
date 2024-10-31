@@ -45,7 +45,7 @@ export function NavChats() {
         <span>Chats</span>
       </SidebarGroupLabel>
       <SidebarGroupAction title="New chat">
-        <Link href="/chat">
+        <Link href="/chat" replace>
           <Plus width={18} height={18} />
           <span className="sr-only">New chat</span>
         </Link>
@@ -69,7 +69,6 @@ export function NavChats() {
               isActive={currentUserChat?.thread_id === item.thread_id}
             >
               <Link href={`/chat/${item.thread_id}`}>
-                {/* <item.icon /> */}
                 <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
@@ -96,12 +95,6 @@ export function NavChats() {
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
-        {/* <SidebarMenuItem>
-          <SidebarMenuButton>
-            <MoreHorizontal />
-            <span>More</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem> */}
       </SidebarMenu>
     </SidebarGroup>
   );

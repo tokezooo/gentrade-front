@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout(props: { children: ReactNode }) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
+    <ClerkProvider>
       <html lang="en">
         <body className="antialiased bg-sidebar">
           <ThemeProvider attribute="class" defaultTheme="system">

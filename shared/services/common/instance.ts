@@ -22,6 +22,6 @@ export const getInstance = async (): Promise<AxiosInstance> => {
   return axiosInstance;
 };
 
-export const resetInstance = (): void => {
+export const resetInstance = async (): Promise<void> => {
   axiosInstance = null;
 };

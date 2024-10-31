@@ -7,9 +7,12 @@ export default async function Page() {
   const id = generateUUID();
   const { userId } = await auth();
 
+  console.log("[NEW CHAT]");
+
   const chat = {
     thread_id: id,
     messages: [],
+    title: null,
   };
 
   return <Chat chat={chat} />;
