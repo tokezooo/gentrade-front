@@ -28,7 +28,6 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { NavChats } from "./nav-chats";
-import { NavChatsServer } from "./nav-chats-server";
 
 const data = {
   navMain: [
@@ -177,8 +176,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarContent>
         {/* <NavMain items={data.navMain} /> */}
         {/* <NavProjects projects={data.projects} /> */}
-        {/* <NavChats /> */}
-        <NavChatsServer />
+        <NavChats />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

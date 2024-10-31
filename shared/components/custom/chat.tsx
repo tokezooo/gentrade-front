@@ -18,6 +18,7 @@ export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
   const { setCurrentUserChat } = useUserChatStore();
   const [firstLoad, setFirstLoad] = useState(true);
+  const [renderMessages, setRenderMessages] = useState<Array<Message>>([]);
   const pathname = usePathname();
 
   let isNewChat = false;
@@ -37,6 +38,7 @@ export function Chat({ chat }: { chat: ChatType }) {
     setCurrentUserChat(chat);
 
     if (!isLoading && messages.length > 0) {
+      // setRenderMessages([...messages]);
       if (!firstLoad && !isNewChat) {
         mutateUpdateChat({
           thread_id: chat.thread_id,
@@ -50,6 +52,14 @@ export function Chat({ chat }: { chat: ChatType }) {
         });
       }
     }
+
+    // if (isLoading && messages.length > 0) {
+    //   setRenderMessages([
+    //     ...messages,
+    //     { id: "loading", role: "assistant", content: "" },
+    //   ]);
+    // }
+
     setFirstLoad(false);
   }, [isLoading]);
 
@@ -59,46 +69,41 @@ export function Chat({ chat }: { chat: ChatType }) {
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   return (
-    <>
-      <div className="flex flex-1 flex-col justify-between items-center gap-5 w-full overflow-y-auto">
+    <div className="flex flex-col min-w-0 h-[calc(100svh-theme(spacing.16))] bg-background rounded-xl">
+      <div
+        ref={messagesContainerRef}
+        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
+      >
+        {messages.length === 0 && <Overview />}
+
+        {messages.map((message) => (
+          <PreviewMessage
+            key={message.id}
+            role={message.role}
+            content={message.content}
+            attachments={message.experimental_attachments}
+            toolInvocations={message.toolInvocations}
+          />
+        ))}
+
         <div
-          ref={messagesContainerRef}
-          className="flex flex-col gap-4 w-full items-center"
-        >
-          {messages.length === 0 && <Overview />}
-
-          {messages.map((message, index) => (
-            <PreviewMessage
-              index={index}
-              key={message.id}
-              role={message.role}
-              content={message.content}
-              attachments={message.experimental_attachments}
-              toolInvocations={message.toolInvocations}
-            />
-          ))}
-
-          <div
-            ref={messagesEndRef}
-            className="shrink-0 min-w-[24px] min-h-[24px]"
-          />
-        </div>
+          ref={messagesEndRef}
+          className="shrink-0 min-w-[24px] min-h-[24px]"
+        />
       </div>
-      <div className="w-full flex items-center justify-center pb-5">
-        <form className="flex flex-row gap-2 bg-background items-end w-full">
-          <MultimodalInput
-            input={input}
-            setInput={setInput}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-            stop={stop}
-            attachments={attachments}
-            setAttachments={setAttachments}
-            messages={messages}
-            append={append}
-          />
-        </form>
-      </div>
-    </>
+      <form className="flex mx-auto bg-background pb-4 gap-2 w-full max-w-5xl rounded-xl">
+        <MultimodalInput
+          input={input}
+          setInput={setInput}
+          handleSubmit={handleSubmit}
+          isLoading={isLoading}
+          stop={stop}
+          attachments={attachments}
+          setAttachments={setAttachments}
+          messages={messages}
+          append={append}
+        />
+      </form>
+    </div>
   );
 }
