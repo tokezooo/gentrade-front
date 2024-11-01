@@ -1,6 +1,6 @@
-import { convertToCoreMessages, Message, streamText } from "ai";
+import { convertToCoreMessages, Message, streamText } from "ai_dryamvlad";
 import { RemoteRunnable } from "langchain/runnables/remote";
-import { LangChainAdapter } from "ai";
+import { LangChainAdapterCustom } from "ai_dryamvlad";
 import { auth } from "@clerk/nextjs/server";
 
 // import { customModel } from "@/ai";

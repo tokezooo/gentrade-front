@@ -5,7 +5,7 @@ import {
   Message,
   ToolInvocation,
   convertToCoreMessages,
-} from "ai";
+} from "ai_dryamvlad";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

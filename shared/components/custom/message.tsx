@@ -1,6 +1,6 @@
 "use client";
 
-import { Attachment, ToolInvocation } from "ai";
+import { Attachment, ToolInvocation } from "ai_dryamvlad";
 import cx from "classnames";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";

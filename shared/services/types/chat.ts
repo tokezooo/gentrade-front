@@ -1,4 +1,4 @@
-import { Message } from "ai";
+import { Message } from "ai_dryamvlad";
 
 export interface ChatAdd {
   thread_id: string;

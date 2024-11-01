@@ -1,4 +1,4 @@
-import { Attachment } from "ai";
+import { Attachment } from "ai_dryamvlad";
 
 import { LoaderIcon } from "./icons";
 

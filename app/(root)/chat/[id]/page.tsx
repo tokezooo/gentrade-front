@@ -1,4 +1,4 @@
-import { CoreMessage } from "ai";
+import { CoreMessage } from "ai_dryamvlad";
 import { redirect } from "next/navigation";
 
 import { Chat } from "@/shared/components/custom/chat";

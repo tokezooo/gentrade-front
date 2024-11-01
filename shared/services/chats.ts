@@ -3,7 +3,7 @@ import axios from "axios";
 import { ApiEndpoints } from "./common/constants";
 import { getInstance } from "./common/instance";
 import { Chat, ChatAdd, ChatListItem } from "./types/chat";
-import { convertToCoreMessages } from "ai";
+import { convertToCoreMessages } from "ai_dryamvlad";
 
 /**
  * Fetches the list of user chats from the API.

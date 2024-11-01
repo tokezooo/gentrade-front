@@ -1,7 +1,7 @@
 "use client";
 
-import { Attachment, Message } from "ai";
-import { useChat } from "ai/react";
+import { Attachment, Message } from "ai_dryamvlad";
+import { useChat } from "ai_dryamvlad/react";
 import { useEffect, useState } from "react";
 
 import { Message as PreviewMessage } from "@/shared/components/custom/message";

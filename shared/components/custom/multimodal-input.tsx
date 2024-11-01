@@ -1,6 +1,11 @@
 "use client";
 
-import { Attachment, ChatRequestOptions, CreateMessage, Message } from "ai";
+import {
+  Attachment,
+  ChatRequestOptions,
+  CreateMessage,
+  Message,
+} from "ai_dryamvlad";
 import { motion } from "framer-motion";
 import React, {
   useRef,
