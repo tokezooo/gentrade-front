@@ -5,10 +5,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/shared/components/ui/sidebar";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import { ReactNode } from "react";
-import { API } from "@/shared/services/api-client";
 import Breadcrumbs from "@/shared/components/custom/breadcrumbs";
 
 export const metadata: Metadata = {
@@ -17,17 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout(props: { children: ReactNode }) {
-  const { userId } = await auth();
   const user = await currentUser();
   const userData = {
     name: `${user?.firstName} ${user?.lastName}`,
     email: user?.emailAddresses[0].emailAddress,
     avatar: user?.imageUrl,
   };
-
-  if (userId) {
-    await API.users.createUser();
-  }
 
   return (
     <SidebarProvider>

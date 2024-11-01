@@ -18,7 +18,6 @@ export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
   const { setCurrentUserChat } = useUserChatStore();
   const [firstLoad, setFirstLoad] = useState(true);
-  const [renderMessages, setRenderMessages] = useState<Array<Message>>([]);
   const pathname = usePathname();
 
   let isNewChat = false;
