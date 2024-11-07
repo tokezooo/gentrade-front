@@ -4,7 +4,6 @@ import { ChatAdd, Chat, ChatListItem } from "../services/types/chat";
 import { getQueryClient } from "../lib/use-query/get-query-client";
 import { useUserChatStore } from "../store/chat-store";
 import { usePathname } from "next/navigation";
-// import { useRouter as useRouterShallow } from "next/router";
 import { useRouter } from "next/navigation";
 
 export const useUserChats = () => {
@@ -15,9 +14,11 @@ export const useUserChats = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["getUserChats"],
+    staleTime: Infinity,
     queryFn: async () => {
       const response = await API.chats.getUserChats();
-      return response;
+
+      return response ?? [];
     },
   });
 
@@ -25,7 +26,7 @@ export const useUserChats = () => {
     mutationKey: ["mutateAddChat"],
     mutationFn: async (chat: ChatAdd) => {
       const response = await API.chats.addChat(chat);
-      return response;
+      return response ?? [];
     },
     onMutate: async (chat: ChatAdd) => {
       await queryClient.cancelQueries({ queryKey: ["getUserChats"] });

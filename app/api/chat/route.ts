@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   const stream = remoteChain.streamEvents(
     {
-      input: coreMessages.slice(-1),
+      messages: coreMessages.slice(-1),
     },
     {
       version: "v2",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Attachment, Message } from "ai_dryamvlad";
+import { Attachment } from "ai_dryamvlad";
 import { useChat } from "ai_dryamvlad/react";
 import { useEffect, useState } from "react";
 
@@ -13,11 +13,18 @@ import { Chat as ChatType } from "@/shared/services/types/chat";
 import { useUserChats } from "@/shared/hooks/use-user-chats";
 import { useUserChatStore } from "@/shared/store/chat-store";
 import { usePathname } from "next/navigation";
-
+import { ChatStateModifier } from "./chat-state-modifier";
+import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
+import { AnimatePresence } from "framer-motion";
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
   const { setCurrentUserChat } = useUserChatStore();
+  const { chatModifier } = useChatStateModifierStore();
   const [firstLoad, setFirstLoad] = useState(true);
+  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  const [messagesContainerRef, messagesEndRef] =
+    useScrollToBottom<HTMLDivElement>();
+
   const pathname = usePathname();
 
   let isNewChat = false;
@@ -34,11 +41,16 @@ export function Chat({ chat }: { chat: ChatType }) {
     const newPath = `/chat/${chat.thread_id}`;
     isNewChat = pathname !== newPath;
 
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "instant",
+      block: "end",
+    });
+
     setCurrentUserChat(chat);
 
     if (!isLoading && messages.length > 0) {
       const chatTitle = chat.title || messages[0].content;
-      // setRenderMessages([...messages]);
+
       if (!firstLoad && !isNewChat) {
         mutateUpdateChat({
           thread_id: chat.thread_id,
@@ -55,20 +67,8 @@ export function Chat({ chat }: { chat: ChatType }) {
       }
     }
 
-    // if (isLoading && messages.length > 0) {
-    //   setRenderMessages([
-    //     ...messages,
-    //     { id: "loading", role: "assistant", content: "" },
-    //   ]);
-    // }
-
     setFirstLoad(false);
   }, [isLoading]);
-
-  const [messagesContainerRef, messagesEndRef] =
-    useScrollToBottom<HTMLDivElement>();
-
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
   return (
     <div className="flex flex-col min-w-0 h-[calc(100svh-theme(spacing.16))] bg-background rounded-xl">
@@ -93,7 +93,10 @@ export function Chat({ chat }: { chat: ChatType }) {
           className="shrink-0 min-w-[24px] min-h-[24px]"
         />
       </div>
-      <form className="flex mx-auto bg-background pb-4 gap-2 w-full max-w-5xl px-4 rounded-xl">
+      <form className="flex relative mx-auto bg-background pb-4 gap-2 w-full max-w-5xl px-4 rounded-xl">
+        <AnimatePresence>
+          {chatModifier.state && <ChatStateModifier />}
+        </AnimatePresence>
         <MultimodalInput
           input={input}
           setInput={setInput}

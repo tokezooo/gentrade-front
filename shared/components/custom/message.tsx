@@ -1,15 +1,13 @@
 "use client";
 
 import { Attachment, ToolInvocation } from "ai_dryamvlad";
-import cx from "classnames";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { LoaderCircle, Sparkles } from "lucide-react";
+import { ReactNode } from "react";
 
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
-import { Weather } from "./weather";
-import ToolCalculator from "../tools/tool-calculator";
+import { TOOL_COMPONENT_MAP } from "../tools";
 
 export const Message = ({
   role,
@@ -36,9 +34,14 @@ export const Message = ({
           </div>
         )}
         <div className="flex flex-col gap-2 group-data-[role=user]/message:gap-0 w-full">
-          {content && (
+          {content !== "" && (
             <div className="flex flex-col gap-4">
               <Markdown>{content as string}</Markdown>
+            </div>
+          )}
+          {content === "" && !toolInvocations && (
+            <div className="flex items-center">
+              <LoaderCircle className="size-8 text-muted-foreground animate-spin" />
             </div>
           )}
 
@@ -46,14 +49,13 @@ export const Message = ({
             <div className="flex flex-col gap-4">
               {toolInvocations.map((toolInvocation) => {
                 const { toolName, toolCallId, state } = toolInvocation;
+                const toolComponent = TOOL_COMPONENT_MAP[toolName];
 
                 if (state === "result") {
                   const { result } = toolInvocation;
                   return (
                     <div key={toolCallId}>
-                      {toolName === "Calculator" ? (
-                        <ToolCalculator result={result as string} />
-                      ) : null}
+                      {toolComponent.final({ result })}
                     </div>
                   );
                 } else {
@@ -62,9 +64,7 @@ export const Message = ({
                       key={toolCallId}
                       className="skeleton text-zinc-200 dark:text-zinc-700"
                     >
-                      {toolName === "Calculator" ? (
-                        <ToolCalculator result={"loading..."} />
-                      ) : null}
+                      {toolComponent.loading()}
                     </div>
                   );
                 }

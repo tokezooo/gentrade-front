@@ -15,7 +15,7 @@ export default function RootLayout(props: { children: ReactNode }) {
   return (
     <ClerkProvider dynamic appearance={{ baseTheme: dark }}>
       <html lang="en" suppressHydrationWarning>
-        <body className="antialiased bg-sidebar">
+        <body className="antialiased bg-sidebar overflow-hidden">
           <ThemeProvider attribute="class" defaultTheme="system">
             {/* <div className="flex flex-col items-center h-dvh bg-background w-full"> */}
             {/* <Header /> */}
