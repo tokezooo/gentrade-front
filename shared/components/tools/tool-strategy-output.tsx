@@ -67,7 +67,13 @@ export const StrategyPropertyItem = ({
   );
 };
 
-export const ToolStrategyOutput = ({ result }: { result: string }) => {
+export const ToolStrategyOutput = ({
+  result,
+  toolCallId,
+}: {
+  result: string;
+  toolCallId: string;
+}) => {
   const { chatModifier, setChatModifier } = useChatStateModifierStore();
   const parsedResult = JSON.parse(result);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -125,7 +131,7 @@ export const ToolStrategyOutput = ({ result }: { result: string }) => {
             onClick={() => {
               setChatModifier({
                 state: "editing",
-                subject: parsedResult,
+                subject: { ...parsedResult, toolCallId },
               });
             }}
           >

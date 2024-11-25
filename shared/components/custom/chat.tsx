@@ -20,7 +20,7 @@ import { Strategy } from "@/shared/lib/validation";
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
   const { setCurrentUserChat } = useUserChatStore();
-  const { chatModifier } = useChatStateModifierStore();
+  const { chatModifier, setChatModifier } = useChatStateModifierStore();
   const [firstLoad, setFirstLoad] = useState(true);
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [messagesContainerRef, messagesEndRef] =
@@ -36,6 +36,43 @@ export function Chat({ chat }: { chat: ChatType }) {
       initialMessages: chat.messages,
       streamProtocol: "data",
     });
+
+  const handleStrategyUpdate = (updatedStrategy: Strategy) => {
+    const lastStrategyMessageIndex = messages.findIndex((message) =>
+      message.toolInvocations?.some(
+        (tool) =>
+          tool.toolName === "StrategyOutputTool" &&
+          tool.toolCallId === chatModifier.subject?.toolCallId
+      )
+    );
+
+    if (lastStrategyMessageIndex !== -1) {
+      const updatedMessages = [...messages];
+      const messageToUpdate = updatedMessages[lastStrategyMessageIndex];
+
+      if (messageToUpdate.toolInvocations) {
+        messageToUpdate.toolInvocations = messageToUpdate.toolInvocations.map(
+          (tool) => {
+            if (tool.toolName === "StrategyOutputTool") {
+              return {
+                ...tool,
+                result: JSON.stringify(updatedStrategy),
+              };
+            }
+            return tool;
+          }
+        );
+      }
+
+      mutateUpdateChat({
+        thread_id: chat.thread_id,
+        messages: updatedMessages,
+        title: chat.title,
+      });
+    }
+
+    setChatModifier({ state: "idle", subject: null });
+  };
 
   // Update pathname when new chat is started. Save chat on each new full message received.
   useEffect(() => {
@@ -92,9 +129,7 @@ export function Chat({ chat }: { chat: ChatType }) {
         {chatModifier.state === "editing" && (
           <StrategyEditForm
             initialData={chatModifier.subject as Strategy}
-            onSubmit={(updatedStrategy) => {
-              console.log("Updated strategy:", updatedStrategy);
-            }}
+            onSubmit={handleStrategyUpdate}
           />
         )}
 

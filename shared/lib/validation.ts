@@ -46,7 +46,9 @@ export const strategySchema = z.object({
     .describe("Can Short is whether the strategy can short the asset."),
 });
 
-export type Strategy = z.infer<typeof strategySchema>;
+export type Strategy = z.infer<typeof strategySchema> & {
+  toolCallId?: string;
+};
 
 // Utility function to extract descriptions
 export const getStrategyDescriptions = () => {

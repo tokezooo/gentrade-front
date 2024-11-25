@@ -55,7 +55,7 @@ export const Message = ({
                   const { result } = toolInvocation;
                   return (
                     <div key={toolCallId}>
-                      {toolComponent.final({ result })}
+                      {toolComponent.final({ result, toolCallId })}
                     </div>
                   );
                 } else {
