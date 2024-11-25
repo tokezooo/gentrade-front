@@ -1,8 +1,9 @@
 import { create } from "zustand";
+import { Strategy } from "../lib/validation";
 
 interface ChatModifier {
-  state: "editing" | "deleting" | null;
-  subject: string | null;
+  state: "editing" | "deleting" | "idle" | null;
+  subject: Strategy | null;
 }
 
 interface ChatStateModifierState {

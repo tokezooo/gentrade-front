@@ -13,9 +13,10 @@ import { Chat as ChatType } from "@/shared/services/types/chat";
 import { useUserChats } from "@/shared/hooks/use-user-chats";
 import { useUserChatStore } from "@/shared/store/chat-store";
 import { usePathname } from "next/navigation";
-import { ChatStateModifier } from "./chat-state-modifier";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
-import { AnimatePresence } from "framer-motion";
+import { StrategyEditForm } from "./strategy-edit-form";
+import { Strategy } from "@/shared/lib/validation";
+
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
   const { setCurrentUserChat } = useUserChatStore();
@@ -88,15 +89,21 @@ export function Chat({ chat }: { chat: ChatType }) {
           />
         ))}
 
+        {chatModifier.state === "editing" && (
+          <StrategyEditForm
+            initialData={chatModifier.subject as Strategy}
+            onSubmit={(updatedStrategy) => {
+              console.log("Updated strategy:", updatedStrategy);
+            }}
+          />
+        )}
+
         <div
           ref={messagesEndRef}
           className="shrink-0 min-w-[24px] min-h-[24px]"
         />
       </div>
       <form className="flex relative mx-auto bg-background pb-4 gap-2 w-full max-w-5xl px-4 rounded-xl">
-        <AnimatePresence>
-          {chatModifier.state && <ChatStateModifier />}
-        </AnimatePresence>
         <MultimodalInput
           input={input}
           setInput={setInput}
