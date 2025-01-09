@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const strategySchema = z.object({
+export const strategyDraftSchema = z.object({
   name: z
     .string()
     .min(1, "Strategy name is required")
@@ -46,14 +46,14 @@ export const strategySchema = z.object({
     .describe("Can Short is whether the strategy can short the asset."),
 });
 
-export type Strategy = z.infer<typeof strategySchema> & {
+export type StrategyDraft = z.infer<typeof strategyDraftSchema> & {
   toolCallId?: string;
 };
 
 // Utility function to extract descriptions
-export const getStrategyDescriptions = () => {
+export const getStrategyDraftDescriptions = () => {
   return Object.fromEntries(
-    Object.entries(strategySchema.shape).map(([key, schema]) => [
+    Object.entries(strategyDraftSchema.shape).map(([key, schema]) => [
       key,
       schema._def.description,
     ])
