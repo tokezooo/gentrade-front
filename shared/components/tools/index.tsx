@@ -10,7 +10,7 @@ type ToolComponentMap = {
 };
 
 export const TOOL_COMPONENT_MAP: ToolComponentMap = {
-  StrategyOutputTool: {
+  StrategyDraftOutputTool: {
     loading: (props?: any) => <div>Loading...</div>,
     final: (props?: any) => <ToolStrategyOutput {...props} />,
   },

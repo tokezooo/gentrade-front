@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Strategy, strategySchema } from "@/shared/lib/validation";
+import { StrategyDraft, strategyDraftSchema } from "@/shared/lib/validation";
 import {
   Dialog,
   DialogContent,
@@ -13,23 +13,23 @@ import CustomFormField, { FormFieldType } from "./custom-form-field";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
 import { Form } from "../ui/form";
 
-interface StrategyEditFormProps {
-  initialData: Strategy;
-  onSubmit: (data: Strategy) => void;
+interface StrategyDraftEditFormProps {
+  initialData: StrategyDraft;
+  onSubmit: (data: StrategyDraft) => void;
 }
 
-export function StrategyEditForm({
+export function StrategyDraftEditForm({
   initialData,
   onSubmit,
-}: StrategyEditFormProps) {
+}: StrategyDraftEditFormProps) {
   const { chatModifier, setChatModifier } = useChatStateModifierStore();
 
-  const form = useForm<Strategy>({
-    resolver: zodResolver(strategySchema),
+  const form = useForm<StrategyDraft>({
+    resolver: zodResolver(strategyDraftSchema),
     defaultValues: initialData,
   });
 
-  const handleSubmit = (data: Strategy) => {
+  const handleSubmit = (data: StrategyDraft) => {
     onSubmit(data);
     setChatModifier({ state: "idle", subject: null });
   };

@@ -18,14 +18,16 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
-import { getStrategyDescriptions } from "@/shared/lib/validation";
+import { useUserStrategies } from "@/shared/hooks/use-user-strategies";
+import { getStrategyDraftDescriptions } from "@/shared/lib/validation";
 import { ChevronsUpDown, Info, Pencil, Save, TrendingUp } from "lucide-react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import React, { useRef } from "react";
+import { toast } from "sonner";
 
 // Extract descriptions
-const strategyDescriptions = getStrategyDescriptions();
+const strategyDescriptions = getStrategyDraftDescriptions();
 
 export const StrategyPropertyItem = ({
   propertyKey,
@@ -75,8 +77,19 @@ export const ToolStrategyOutput = ({
   toolCallId: string;
 }) => {
   const { chatModifier, setChatModifier } = useChatStateModifierStore();
+  const { mutateAddStrategy, isPendingAddStrategy } = useUserStrategies();
   const parsedResult = JSON.parse(result);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleSave = async () => {
+    try {
+      await mutateAddStrategy(parsedResult);
+      toast.success("Strategy saved successfully");
+    } catch (error) {
+      toast.error("Failed to save strategy");
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -122,9 +135,13 @@ export const ToolStrategyOutput = ({
           </CollapsibleContent>
         </Collapsible>
         <CardFooter className="flex justify-start gap-2">
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            onClick={handleSave}
+            disabled={isPendingAddStrategy}
+          >
             <Save strokeWidth={1.1} />
-            Save
+            {isPendingAddStrategy ? "Saving..." : "Save"}
           </Button>
           <Button
             variant="outline"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Attachment } from "ai_dryamvlad";
+import { Attachment, Message, ToolInvocation } from "ai_dryamvlad";
 import { useChat } from "ai_dryamvlad/react";
 import { useEffect, useState } from "react";
 
@@ -14,8 +14,8 @@ import { useUserChats } from "@/shared/hooks/use-user-chats";
 import { useUserChatStore } from "@/shared/store/chat-store";
 import { usePathname } from "next/navigation";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
-import { StrategyEditForm } from "./strategy-edit-form";
-import { Strategy } from "@/shared/lib/validation";
+import { StrategyDraftEditForm } from "./strategy-draft-edit-form";
+import { StrategyDraft } from "@/shared/lib/validation";
 
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
@@ -37,26 +37,27 @@ export function Chat({ chat }: { chat: ChatType }) {
       streamProtocol: "data",
     });
 
-  const handleStrategyUpdate = (updatedStrategy: Strategy) => {
-    const lastStrategyMessageIndex = messages.findIndex((message) =>
-      message.toolInvocations?.some(
-        (tool) =>
-          tool.toolName === "StrategyOutputTool" &&
-          tool.toolCallId === chatModifier.subject?.toolCallId
-      )
+  const handleStrategyDraftUpdate = (updatedStrategyDraft: StrategyDraft) => {
+    const lastStrategyDraftMessageIndex = messages.findIndex(
+      (message: Message) =>
+        message.toolInvocations?.some(
+          (tool: ToolInvocation) =>
+            tool.toolName === "StrategyDraftOutputTool" &&
+            tool.toolCallId === chatModifier.subject?.toolCallId
+        )
     );
 
-    if (lastStrategyMessageIndex !== -1) {
+    if (lastStrategyDraftMessageIndex !== -1) {
       const updatedMessages = [...messages];
-      const messageToUpdate = updatedMessages[lastStrategyMessageIndex];
+      const messageToUpdate = updatedMessages[lastStrategyDraftMessageIndex];
 
       if (messageToUpdate.toolInvocations) {
         messageToUpdate.toolInvocations = messageToUpdate.toolInvocations.map(
-          (tool) => {
-            if (tool.toolName === "StrategyOutputTool") {
+          (tool: ToolInvocation) => {
+            if (tool.toolName === "StrategyDraftOutputTool") {
               return {
                 ...tool,
-                result: JSON.stringify(updatedStrategy),
+                result: JSON.stringify(updatedStrategyDraft),
               };
             }
             return tool;
@@ -71,7 +72,7 @@ export function Chat({ chat }: { chat: ChatType }) {
       });
     }
 
-    setChatModifier({ state: "idle", subject: null });
+    setChatModifier({ state: null, subject: null });
   };
 
   // Update pathname when new chat is started. Save chat on each new full message received.
@@ -127,9 +128,9 @@ export function Chat({ chat }: { chat: ChatType }) {
         ))}
 
         {chatModifier.state === "editing" && (
-          <StrategyEditForm
-            initialData={chatModifier.subject as Strategy}
-            onSubmit={handleStrategyUpdate}
+          <StrategyDraftEditForm
+            initialData={chatModifier.subject as StrategyDraft}
+            onSubmit={handleStrategyDraftUpdate}
           />
         )}
 
