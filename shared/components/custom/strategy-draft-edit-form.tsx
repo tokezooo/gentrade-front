@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StrategyDraft, strategyDraftSchema } from "@/shared/lib/validation";
+import {
+  StrategyDraft,
+  strategyDraftSchema,
+} from "@/shared/services/types/strategy-draft";
 import {
   Dialog,
   DialogContent,

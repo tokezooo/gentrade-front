@@ -48,6 +48,7 @@ export const strategyDraftSchema = z.object({
 
 export type StrategyDraft = z.infer<typeof strategyDraftSchema> & {
   toolCallId?: string;
+  strategyId?: number;
 };
 
 // Utility function to extract descriptions

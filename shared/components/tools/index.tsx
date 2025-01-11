@@ -1,4 +1,4 @@
-import { ToolStrategyOutput } from "./tool-strategy-output";
+import { ToolStrategyDraftOutput } from "./tool-strategy-draft-output";
 
 type ToolComponent = {
   loading: (props?: any) => React.ReactNode;
@@ -12,6 +12,6 @@ type ToolComponentMap = {
 export const TOOL_COMPONENT_MAP: ToolComponentMap = {
   StrategyDraftOutputTool: {
     loading: (props?: any) => <div>Loading...</div>,
-    final: (props?: any) => <ToolStrategyOutput {...props} />,
+    final: (props?: any) => <ToolStrategyDraftOutput {...props} />,
   },
 };

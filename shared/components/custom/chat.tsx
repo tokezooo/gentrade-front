@@ -15,7 +15,9 @@ import { useUserChatStore } from "@/shared/store/chat-store";
 import { usePathname } from "next/navigation";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
 import { StrategyDraftEditForm } from "./strategy-draft-edit-form";
-import { StrategyDraft } from "@/shared/lib/validation";
+import { StrategyDraft } from "@/shared/services/types/strategy-draft";
+import { useStrategyDraftUpdate } from "@/shared/hooks/use-strategy-draft-update";
+import { StrategyDraftProvider } from "@/shared/contexts/strategy-draft-context";
 
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
@@ -37,43 +39,11 @@ export function Chat({ chat }: { chat: ChatType }) {
       streamProtocol: "data",
     });
 
-  const handleStrategyDraftUpdate = (updatedStrategyDraft: StrategyDraft) => {
-    const lastStrategyDraftMessageIndex = messages.findIndex(
-      (message: Message) =>
-        message.toolInvocations?.some(
-          (tool: ToolInvocation) =>
-            tool.toolName === "StrategyDraftOutputTool" &&
-            tool.toolCallId === chatModifier.subject?.toolCallId
-        )
-    );
-
-    if (lastStrategyDraftMessageIndex !== -1) {
-      const updatedMessages = [...messages];
-      const messageToUpdate = updatedMessages[lastStrategyDraftMessageIndex];
-
-      if (messageToUpdate.toolInvocations) {
-        messageToUpdate.toolInvocations = messageToUpdate.toolInvocations.map(
-          (tool: ToolInvocation) => {
-            if (tool.toolName === "StrategyDraftOutputTool") {
-              return {
-                ...tool,
-                result: JSON.stringify(updatedStrategyDraft),
-              };
-            }
-            return tool;
-          }
-        );
-      }
-
-      mutateUpdateChat({
-        thread_id: chat.thread_id,
-        messages: updatedMessages,
-        title: chat.title,
-      });
-    }
-
-    setChatModifier({ state: null, subject: null });
-  };
+  const handleStrategyDraftUpdate = useStrategyDraftUpdate(
+    messages,
+    chat.thread_id,
+    chat.title
+  );
 
   // Update pathname when new chat is started. Save chat on each new full message received.
   useEffect(() => {
@@ -110,48 +80,52 @@ export function Chat({ chat }: { chat: ChatType }) {
   }, [isLoading]);
 
   return (
-    <div className="flex flex-col min-w-0 h-[calc(100svh-theme(spacing.16))] bg-background rounded-xl">
-      <div
-        ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
-      >
-        {messages.length === 0 && <Overview />}
-
-        {messages.map((message) => (
-          <PreviewMessage
-            key={message.id}
-            role={message.role}
-            content={message.content}
-            attachments={message.experimental_attachments}
-            toolInvocations={message.toolInvocations}
-          />
-        ))}
-
-        {chatModifier.state === "editing" && (
-          <StrategyDraftEditForm
-            initialData={chatModifier.subject as StrategyDraft}
-            onSubmit={handleStrategyDraftUpdate}
-          />
-        )}
-
+    <StrategyDraftProvider
+      handleStrategyDraftUpdate={handleStrategyDraftUpdate}
+    >
+      <div className="flex flex-col min-w-0 h-[calc(100svh-theme(spacing.16))] bg-background rounded-xl">
         <div
-          ref={messagesEndRef}
-          className="shrink-0 min-w-[24px] min-h-[24px]"
-        />
+          ref={messagesContainerRef}
+          className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
+        >
+          {messages.length === 0 && <Overview />}
+
+          {messages.map((message) => (
+            <PreviewMessage
+              key={message.id}
+              role={message.role}
+              content={message.content}
+              attachments={message.experimental_attachments}
+              toolInvocations={message.toolInvocations}
+            />
+          ))}
+
+          {chatModifier.state === "editing" && (
+            <StrategyDraftEditForm
+              initialData={chatModifier.subject as StrategyDraft}
+              onSubmit={handleStrategyDraftUpdate}
+            />
+          )}
+
+          <div
+            ref={messagesEndRef}
+            className="shrink-0 min-w-[24px] min-h-[24px]"
+          />
+        </div>
+        <form className="flex relative mx-auto bg-background pb-4 gap-2 w-full max-w-5xl px-4 rounded-xl">
+          <MultimodalInput
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            stop={stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            messages={messages}
+            append={append}
+          />
+        </form>
       </div>
-      <form className="flex relative mx-auto bg-background pb-4 gap-2 w-full max-w-5xl px-4 rounded-xl">
-        <MultimodalInput
-          input={input}
-          setInput={setInput}
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
-          stop={stop}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          messages={messages}
-          append={append}
-        />
-      </form>
-    </div>
+    </StrategyDraftProvider>
   );
 }

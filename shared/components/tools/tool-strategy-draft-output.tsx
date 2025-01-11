@@ -19,17 +19,27 @@ import {
 } from "../ui/tooltip";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
 import { useUserStrategies } from "@/shared/hooks/use-user-strategies";
-import { getStrategyDraftDescriptions } from "@/shared/lib/validation";
-import { ChevronsUpDown, Info, Pencil, Save, TrendingUp } from "lucide-react";
+import {
+  getStrategyDraftDescriptions,
+  StrategyDraft,
+} from "@/shared/services/types/strategy-draft";
+import {
+  ChevronsUpDown,
+  Eye,
+  Info,
+  Pencil,
+  Save,
+  TrendingUp,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import React, { useRef } from "react";
-import { toast } from "sonner";
+import React, { useEffect, useRef } from "react";
+import { useStrategyDraft } from "@/shared/contexts/strategy-draft-context";
 
 // Extract descriptions
-const strategyDescriptions = getStrategyDraftDescriptions();
+const strategyDraftDescriptions = getStrategyDraftDescriptions();
 
-export const StrategyPropertyItem = ({
+export const StrategyDraftPropertyItem = ({
   propertyKey,
   parsedResult,
 }: {
@@ -45,7 +55,7 @@ export const StrategyPropertyItem = ({
         ? "Yes"
         : "No"
       : parsedResult[propertyKey];
-  const tooltip = strategyDescriptions[propertyKey];
+  const tooltip = strategyDraftDescriptions[propertyKey];
 
   return (
     <div>
@@ -69,24 +79,32 @@ export const StrategyPropertyItem = ({
   );
 };
 
-export const ToolStrategyOutput = ({
+export const ToolStrategyDraftOutput = ({
   result,
   toolCallId,
 }: {
   result: string;
   toolCallId: string;
 }) => {
-  const { chatModifier, setChatModifier } = useChatStateModifierStore();
-  const { mutateAddStrategy, isPendingAddStrategy } = useUserStrategies();
-  const parsedResult = JSON.parse(result);
+  const { setChatModifier } = useChatStateModifierStore();
+  const { mutateCreateStrategyFromDraft, isPendingCreateStrategyFromDraft } =
+    useUserStrategies();
+  const { handleStrategyDraftUpdate } = useStrategyDraft();
+  const strategyDraft: StrategyDraft = JSON.parse(result);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!strategyDraft.toolCallId) {
+      strategyDraft.toolCallId = toolCallId;
+    }
+  }, [strategyDraft]);
 
   const handleSave = async () => {
     try {
-      await mutateAddStrategy(parsedResult);
-      toast.success("Strategy saved successfully");
+      const strategy_id = await mutateCreateStrategyFromDraft(strategyDraft);
+      strategyDraft.strategyId = strategy_id;
+      handleStrategyDraftUpdate(strategyDraft);
     } catch (error) {
-      toast.error("Failed to save strategy");
       console.error(error);
     }
   };
@@ -99,7 +117,7 @@ export const ToolStrategyOutput = ({
             <CardTitle className="flex items-center gap-2 justify-between">
               <div className="flex items-center gap-2 text-xl font-semibold">
                 <TrendingUp className="size-4" />
-                {parsedResult.name}
+                {strategyDraft.name}
               </div>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -110,22 +128,23 @@ export const ToolStrategyOutput = ({
             </CardTitle>
             <Separator orientation="horizontal" />
             <CardDescription className="pt-5">
-              {parsedResult.description}
+              {strategyDraft.description}
             </CardDescription>
           </CardHeader>
           <CollapsibleContent>
             <CardContent>
               <TooltipProvider delayDuration={0}>
                 <div className="space-y-4">
-                  {Object.keys(strategyDescriptions)
+                  {Object.keys(strategyDraftDescriptions)
                     .filter((key) => key !== "name" && key !== "description")
                     .map(
                       (key) =>
-                        parsedResult[key] !== undefined && (
-                          <StrategyPropertyItem
+                        strategyDraft[key as keyof StrategyDraft] !==
+                          undefined && (
+                          <StrategyDraftPropertyItem
                             key={key}
                             propertyKey={key}
-                            parsedResult={parsedResult}
+                            parsedResult={strategyDraft}
                           />
                         )
                     )}
@@ -135,26 +154,38 @@ export const ToolStrategyOutput = ({
           </CollapsibleContent>
         </Collapsible>
         <CardFooter className="flex justify-start gap-2">
-          <Button
-            variant="outline"
-            onClick={handleSave}
-            disabled={isPendingAddStrategy}
-          >
-            <Save strokeWidth={1.1} />
-            {isPendingAddStrategy ? "Saving..." : "Save"}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setChatModifier({
-                state: "editing",
-                subject: { ...parsedResult, toolCallId },
-              });
-            }}
-          >
-            <Pencil strokeWidth={1.1} />
-            Edit
-          </Button>
+          {strategyDraft.strategyId && strategyDraft.strategyId > 0 ? (
+            <a href={`/strategies/${strategyDraft.strategyId}`}>
+              <Button variant="outline">
+                <Eye strokeWidth={1.1} />
+                View
+              </Button>
+            </a>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                onClick={handleSave}
+                disabled={isPendingCreateStrategyFromDraft}
+              >
+                <Save strokeWidth={1.1} />
+                {isPendingCreateStrategyFromDraft ? "Saving..." : "Save"}
+              </Button>
+              <Button
+                variant="outline"
+                disabled={isPendingCreateStrategyFromDraft}
+                onClick={() => {
+                  setChatModifier({
+                    state: "editing",
+                    subject: { ...strategyDraft, toolCallId },
+                  });
+                }}
+              >
+                <Pencil strokeWidth={1.1} />
+                Edit
+              </Button>
+            </>
+          )}
         </CardFooter>
       </Card>
     </>
