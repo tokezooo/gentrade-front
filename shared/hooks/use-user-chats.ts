@@ -75,7 +75,9 @@ export const useUserChats = () => {
         });
 
         if (pathname.includes(thread_id)) {
-          router.push("/chat");
+          setCurrentUserChat(null);
+          router.replace("/chat");
+          router.refresh();
         }
         return { previousChats };
       },

@@ -18,6 +18,7 @@ import { StrategyDraftEditForm } from "./strategy-draft-edit-form";
 import { StrategyDraft } from "@/shared/services/types/strategy-draft";
 import { useStrategyDraftUpdate } from "@/shared/hooks/use-strategy-draft-update";
 import { StrategyDraftProvider } from "@/shared/contexts/strategy-draft-context";
+import { generateUUID } from "@/shared/lib/utils";
 
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
@@ -32,19 +33,37 @@ export function Chat({ chat }: { chat: ChatType }) {
 
   let isNewChat = false;
 
-  const { messages, handleSubmit, input, setInput, append, isLoading, stop } =
-    useChat({
-      body: { id: chat.thread_id },
-      initialMessages: chat.messages,
-      streamProtocol: "data",
-    });
+  const {
+    messages,
+    handleSubmit,
+    input,
+    setInput,
+    append,
+    isLoading,
+    stop,
+    setMessages,
+  } = useChat({
+    body: { id: chat.thread_id },
+    initialMessages: chat.messages,
+    streamProtocol: "data",
+  });
 
   const handleStrategyDraftUpdate = useStrategyDraftUpdate(
     messages,
-    chat.id,
+    chat.id ?? 0,
     chat.thread_id,
     chat.title
   );
+
+  useEffect(() => {
+    if (chat.thread_id === "new") {
+      setMessages([]);
+      setInput("");
+      setAttachments([]);
+      setFirstLoad(true);
+      setCurrentUserChat(chat);
+    }
+  }, [chat.thread_id]);
 
   // Update pathname when new chat is started. Save chat on each new full message received.
   useEffect(() => {
@@ -70,6 +89,7 @@ export function Chat({ chat }: { chat: ChatType }) {
         });
       } else if (isNewChat) {
         window.history.replaceState({}, "", newPath);
+        chat.thread_id = generateUUID();
         mutateAddChat({
           thread_id: chat.thread_id,
           messages: [...messages],

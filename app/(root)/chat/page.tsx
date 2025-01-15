@@ -2,7 +2,7 @@ import { Chat } from "@/shared/components/custom/chat";
 import { generateUUID } from "@/shared/lib/utils";
 
 export default async function Page() {
-  const id = generateUUID();
+  const id = "new";
   const chat = {
     thread_id: id,
     messages: [],

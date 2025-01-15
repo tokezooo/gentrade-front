@@ -3,7 +3,7 @@ import { ChatListItem } from "../services/types/chat";
 
 interface ChatState {
   currentUserChat: ChatListItem | null;
-  setCurrentUserChat: (chat: ChatListItem) => void;
+  setCurrentUserChat: (chat: ChatListItem | null) => void;
 }
 
 export const useUserChatStore = create<ChatState>((set) => ({
