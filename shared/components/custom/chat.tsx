@@ -41,6 +41,7 @@ export function Chat({ chat }: { chat: ChatType }) {
 
   const handleStrategyDraftUpdate = useStrategyDraftUpdate(
     messages,
+    chat.id,
     chat.thread_id,
     chat.title
   );
@@ -62,6 +63,7 @@ export function Chat({ chat }: { chat: ChatType }) {
 
       if (!firstLoad && !isNewChat) {
         mutateUpdateChat({
+          id: chat.id,
           thread_id: chat.thread_id,
           messages: [...messages],
           title: chatTitle,

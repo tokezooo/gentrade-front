@@ -27,9 +27,10 @@ export const getUserChats = async (): Promise<ChatListItem[]> => {
  *
  * @param chat The chat data to save
  */
-export const addChat = async (chat: ChatAdd): Promise<void> => {
+export const addChat = async (chat: ChatAdd): Promise<Chat> => {
   const axiosInstance = await getInstance();
-  await axiosInstance.post(ApiEndpoints.CHATS, chat);
+  const response = await axiosInstance.post(ApiEndpoints.CHATS, chat);
+  return response.data;
 };
 
 /**

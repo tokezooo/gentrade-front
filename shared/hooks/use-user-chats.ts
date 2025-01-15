@@ -42,8 +42,8 @@ export const useUserChats = () => {
       queryClient.setQueryData(["getUserChats"], context.previousChats);
     },
     onSettled: (data, error, variables) => {
-      if (!error) {
-        setCurrentUserChat(variables);
+      if (!error && data) {
+        setCurrentUserChat(data);
       }
       queryClient.invalidateQueries({ queryKey: ["getUserChats"] });
     },

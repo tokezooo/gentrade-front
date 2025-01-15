@@ -87,22 +87,30 @@ export const ToolStrategyDraftOutput = ({
   toolCallId: string;
 }) => {
   const { setChatModifier } = useChatStateModifierStore();
-  const { mutateCreateStrategyFromDraft, isPendingCreateStrategyFromDraft } =
-    useUserStrategies();
+  const {
+    mutateCreateStrategyFromDraft,
+    isPendingCreateStrategyFromDraft,
+    userStrategyList,
+  } = useUserStrategies();
   const { handleStrategyDraftUpdate } = useStrategyDraft();
+
   const strategyDraft: StrategyDraft = JSON.parse(result);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const strategyExists =
+    strategyDraft.strategy_id &&
+    userStrategyList.some(
+      (strategy) => strategy.id === strategyDraft.strategy_id
+    );
+
   useEffect(() => {
-    if (!strategyDraft.toolCallId) {
-      strategyDraft.toolCallId = toolCallId;
-    }
+    strategyDraft.tool_call_id = toolCallId;
   }, [strategyDraft]);
 
   const handleSave = async () => {
     try {
       const strategy_id = await mutateCreateStrategyFromDraft(strategyDraft);
-      strategyDraft.strategyId = strategy_id;
+      strategyDraft.strategy_id = strategy_id;
       handleStrategyDraftUpdate(strategyDraft);
     } catch (error) {
       console.error(error);
@@ -154,8 +162,8 @@ export const ToolStrategyDraftOutput = ({
           </CollapsibleContent>
         </Collapsible>
         <CardFooter className="flex justify-start gap-2">
-          {strategyDraft.strategyId && strategyDraft.strategyId > 0 ? (
-            <a href={`/strategies/${strategyDraft.strategyId}`}>
+          {strategyExists ? (
+            <a href={`/strategies/${strategyDraft.strategy_id}`}>
               <Button variant="outline">
                 <Eye strokeWidth={1.1} />
                 View
@@ -177,7 +185,7 @@ export const ToolStrategyDraftOutput = ({
                 onClick={() => {
                   setChatModifier({
                     state: "editing",
-                    subject: { ...strategyDraft, toolCallId },
+                    subject: { ...strategyDraft, tool_call_id: toolCallId },
                   });
                 }}
               >

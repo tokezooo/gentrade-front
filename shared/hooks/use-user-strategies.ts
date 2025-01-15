@@ -3,9 +3,11 @@ import { API } from "../services/api-client";
 import { StrategyDraft } from "../services/types/strategy-draft";
 import { Strategy, StrategyListItem } from "../services/types/strategy";
 import { getQueryClient } from "../lib/use-query/get-query-client";
+import { useUserChatStore } from "../store/chat-store";
 
 export const useUserStrategies = () => {
   const queryClient = getQueryClient();
+  const { currentUserChat } = useUserChatStore();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["strategies"],
@@ -22,6 +24,7 @@ export const useUserStrategies = () => {
   } = useMutation({
     mutationKey: ["strategies", "add"],
     mutationFn: async (strategy_draft: StrategyDraft) => {
+      strategy_draft.chat_id = currentUserChat?.id;
       const response = await API.strategies.createStrategyFromDraft(
         strategy_draft
       );

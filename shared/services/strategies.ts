@@ -12,11 +12,9 @@ import { Strategy, StrategyListItem } from "./types/strategy";
 export const getUserStrategies = async (): Promise<StrategyListItem[]> => {
   try {
     const axiosInstance = await getInstance();
-    const response = await axiosInstance.get<{
-      data: StrategyListItem[];
-    }>(ApiEndpoints.STRATEGIES);
+    const response = await axiosInstance.get(ApiEndpoints.STRATEGIES);
 
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error(error);
     return [];

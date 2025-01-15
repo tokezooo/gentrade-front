@@ -7,7 +7,7 @@ export interface ChatAdd {
 }
 
 export interface ChatListItem {
-  id?: number;
+  id: number;
   thread_id: string;
   title: string | null;
   createdAt?: string;

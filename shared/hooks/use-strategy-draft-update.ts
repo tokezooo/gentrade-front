@@ -5,7 +5,8 @@ import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-st
 
 export const useStrategyDraftUpdate = (
   messages: Message[],
-  chatId: string,
+  chatId: number,
+  threadId: string,
   chatTitle: string | null
 ) => {
   const { mutateUpdateChat } = useUserChats();
@@ -14,7 +15,7 @@ export const useStrategyDraftUpdate = (
   const handleStrategyDraftUpdate = (updatedStrategyDraft: StrategyDraft) => {
     console.log(updatedStrategyDraft);
     const toolCallId =
-      updatedStrategyDraft.toolCallId || chatModifier.subject?.toolCallId;
+      updatedStrategyDraft.tool_call_id || chatModifier.subject?.tool_call_id;
     const lastStrategyDraftMessageIndex = messages.findIndex(
       (message: Message) =>
         message.toolInvocations?.some(
@@ -42,7 +43,8 @@ export const useStrategyDraftUpdate = (
         );
       }
       mutateUpdateChat({
-        thread_id: chatId,
+        id: chatId,
+        thread_id: threadId,
         messages: updatedMessages,
         title: chatTitle,
       });
