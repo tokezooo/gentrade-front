@@ -57,7 +57,7 @@ export function NavStrategies() {
             <SidebarMenuItem key={item.id ?? "loading"}>
               <SidebarMenuButton asChild disabled={!item.id}>
                 <Link
-                  href={item.id ? `/strategies/${item.id}` : ""}
+                  href={item.id ? `/strategies/${item.id}` : "#"}
                   className={cn(
                     "flex items-center gap-2",
                     !item.id && "opacity-50"
@@ -67,27 +67,29 @@ export function NavStrategies() {
                   <span>{item.name}</span>
                 </Link>
               </SidebarMenuButton>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuAction showOnHover>
-                    <MoreHorizontal />
-                    <span className="sr-only">More</span>
-                  </SidebarMenuAction>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-48"
-                  side={isMobile ? "bottom" : "right"}
-                  align={isMobile ? "end" : "start"}
-                >
-                  <DropdownMenuItem
-                    className="cursor-pointer text-red-500 dark:text-red-400"
-                    onClick={() => mutateDeleteStrategy(item.id)}
+              {item.id && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuAction showOnHover>
+                      <MoreHorizontal />
+                      <span className="sr-only">More</span>
+                    </SidebarMenuAction>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-48"
+                    side={isMobile ? "bottom" : "right"}
+                    align={isMobile ? "end" : "start"}
                   >
-                    <Trash2 />
-                    <span>Delete strategy</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-500 dark:text-red-400"
+                      onClick={() => mutateDeleteStrategy(item.id)}
+                    >
+                      <Trash2 />
+                      <span>Delete strategy</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </SidebarMenuItem>
           ))
         )}

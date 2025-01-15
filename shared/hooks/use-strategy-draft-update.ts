@@ -13,7 +13,6 @@ export const useStrategyDraftUpdate = (
   const { chatModifier, setChatModifier } = useChatStateModifierStore();
 
   const handleStrategyDraftUpdate = (updatedStrategyDraft: StrategyDraft) => {
-    console.log(updatedStrategyDraft);
     const toolCallId =
       updatedStrategyDraft.tool_call_id || chatModifier.subject?.tool_call_id;
     const lastStrategyDraftMessageIndex = messages.findIndex(

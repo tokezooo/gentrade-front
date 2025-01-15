@@ -19,11 +19,12 @@ import { StrategyDraft } from "@/shared/services/types/strategy-draft";
 import { useStrategyDraftUpdate } from "@/shared/hooks/use-strategy-draft-update";
 import { StrategyDraftProvider } from "@/shared/contexts/strategy-draft-context";
 import { generateUUID } from "@/shared/lib/utils";
+import { toast } from "sonner";
 
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
   const { setCurrentUserChat } = useUserChatStore();
-  const { chatModifier, setChatModifier } = useChatStateModifierStore();
+  const { chatModifier } = useChatStateModifierStore();
   const [firstLoad, setFirstLoad] = useState(true);
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [messagesContainerRef, messagesEndRef] =
@@ -46,6 +47,9 @@ export function Chat({ chat }: { chat: ChatType }) {
     body: { id: chat.thread_id },
     initialMessages: chat.messages,
     streamProtocol: "data",
+    onError(error) {
+      toast.error(error.message);
+    },
   });
 
   const handleStrategyDraftUpdate = useStrategyDraftUpdate(
@@ -67,8 +71,7 @@ export function Chat({ chat }: { chat: ChatType }) {
 
   // Update pathname when new chat is started. Save chat on each new full message received.
   useEffect(() => {
-    const newPath = `/chat/${chat.thread_id}`;
-    isNewChat = pathname !== newPath;
+    isNewChat = chat.thread_id === "new";
 
     messagesEndRef.current?.scrollIntoView({
       behavior: "instant",
@@ -88,8 +91,8 @@ export function Chat({ chat }: { chat: ChatType }) {
           title: chatTitle,
         });
       } else if (isNewChat) {
-        window.history.replaceState({}, "", newPath);
         chat.thread_id = generateUUID();
+        window.history.replaceState({}, "", `/chat/${chat.thread_id}`);
         mutateAddChat({
           thread_id: chat.thread_id,
           messages: [...messages],

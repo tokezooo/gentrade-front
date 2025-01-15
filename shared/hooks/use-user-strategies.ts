@@ -4,6 +4,7 @@ import { StrategyDraft } from "../services/types/strategy-draft";
 import { Strategy, StrategyListItem } from "../services/types/strategy";
 import { getQueryClient } from "../lib/use-query/get-query-client";
 import { useUserChatStore } from "../store/chat-store";
+import { toast } from "sonner";
 
 export const useUserStrategies = () => {
   const queryClient = getQueryClient();
@@ -47,6 +48,7 @@ export const useUserStrategies = () => {
       queryClient.setQueryData(["strategies"], context.previousStrategies);
     },
     onSettled: () => {
+      toast.success("Strategy created");
       queryClient.invalidateQueries({ queryKey: ["strategies"] });
     },
   });
