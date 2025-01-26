@@ -29,10 +29,18 @@ import {
 import Link from "next/link";
 import { useUserStrategies } from "@/shared/hooks/use-user-strategies";
 import { cn } from "../lib/utils";
+import { useNavStore } from "../store/nav-store";
+import type { Strategy as StrategyType } from "@/shared/services/types/strategy";
 
 export function NavStrategies() {
   const { isMobile } = useSidebar();
   const { userStrategyList, mutateDeleteStrategy } = useUserStrategies();
+  const { currentNavState, setCurrentNavState } = useNavStore();
+
+  const currentStrategy = currentNavState?.object;
+  const isCurrentStrategy = (strategyId: number) =>
+    currentNavState?.rootTitle === "Strategies" &&
+    (currentStrategy as StrategyType)?.id === strategyId;
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -55,7 +63,11 @@ export function NavStrategies() {
         ) : (
           userStrategyList.map((item) => (
             <SidebarMenuItem key={item.id ?? "loading"}>
-              <SidebarMenuButton asChild disabled={!item.id}>
+              <SidebarMenuButton
+                asChild
+                disabled={!item.id}
+                isActive={isCurrentStrategy(item.id)}
+              >
                 <Link
                   href={item.id ? `/strategies/${item.id}` : "#"}
                   className={cn(

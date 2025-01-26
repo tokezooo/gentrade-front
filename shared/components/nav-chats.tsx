@@ -30,13 +30,19 @@ import {
   useSidebar,
 } from "@/shared/components/ui/sidebar";
 import Link from "next/link";
-import { useUserChatStore } from "@/shared/store/chat-store";
+import { useNavStore } from "@/shared/store/nav-store";
 import { useUserChats } from "@/shared/hooks/use-user-chats";
+import { ChatListItem } from "@/shared/services/types/chat";
 
 export function NavChats() {
-  const { currentUserChat } = useUserChatStore();
+  const { currentNavState } = useNavStore();
   const { isMobile } = useSidebar();
   const { userChatList, mutateDeleteChat } = useUserChats();
+
+  const currentChat = currentNavState?.object;
+  const isCurrentChat = (threadId: string) =>
+    currentNavState?.rootTitle === "Chats" &&
+    (currentChat as ChatListItem)?.thread_id === threadId;
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -64,10 +70,7 @@ export function NavChats() {
         )}
         {userChatList.map((item) => (
           <SidebarMenuItem key={item.thread_id}>
-            <SidebarMenuButton
-              asChild
-              isActive={currentUserChat?.thread_id === item.thread_id}
-            >
+            <SidebarMenuButton asChild isActive={isCurrentChat(item.thread_id)}>
               <Link href={`/chat/${item.thread_id}`}>
                 <span>{item.title}</span>
               </Link>

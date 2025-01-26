@@ -53,16 +53,14 @@ export const updateStrategy = async (strategy: Strategy): Promise<void> => {
  * @param id The ID of the strategy to fetch
  * @returns The strategy data or null if not found
  */
-export const getStrategy = async (
-  id: string
-): Promise<StrategyDraft | null> => {
+export const getStrategy = async (id: string): Promise<Strategy | null> => {
   try {
     const axiosInstance = await getInstance();
-    const response = await axiosInstance.get<{
-      data: StrategyDraft;
-    }>(`${ApiEndpoints.STRATEGIES}/${id}`);
+    const response = await axiosInstance.get<Strategy>(
+      `${ApiEndpoints.STRATEGIES}/${id}`
+    );
 
-    return response.data.data;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       return null;

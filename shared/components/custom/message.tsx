@@ -8,6 +8,7 @@ import { ReactNode } from "react";
 import { Markdown } from "./markdown";
 import { PreviewAttachment } from "./preview-attachment";
 import { TOOL_COMPONENT_MAP } from "../tools";
+import { MessageLoading } from "../ui/message-loading";
 
 export const Message = ({
   role,
@@ -41,7 +42,8 @@ export const Message = ({
           )}
           {content === "" && !toolInvocations && (
             <div className="flex items-center">
-              <LoaderCircle className="size-8 text-muted-foreground animate-spin" />
+              {/* <LoaderCircle className="size-8 text-muted-foreground animate-spin" /> */}
+              <MessageLoading />
             </div>
           )}
 

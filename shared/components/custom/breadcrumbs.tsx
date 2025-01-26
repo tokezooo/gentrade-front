@@ -8,18 +8,20 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "../ui/breadcrumb";
-import { useUserChatStore } from "@/shared/store/chat-store";
+import { useNavStore } from "@/shared/store/nav-store";
 
 const Breadcrumbs = () => {
-  const currentChat = useUserChatStore((state) => state.currentUserChat);
+  const { currentNavState } = useNavStore();
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem className="hidden md:block">Chats</BreadcrumbItem>
+        <BreadcrumbItem className="hidden md:block">
+          {currentNavState?.rootTitle}
+        </BreadcrumbItem>
         <BreadcrumbSeparator className="hidden md:block" />
         <BreadcrumbItem>
-          <BreadcrumbPage>{currentChat?.title ?? "New chat"}</BreadcrumbPage>
+          <BreadcrumbPage>{currentNavState?.title}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

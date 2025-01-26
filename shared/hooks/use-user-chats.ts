@@ -5,9 +5,10 @@ import { getQueryClient } from "../lib/use-query/get-query-client";
 import { useUserChatStore } from "../store/chat-store";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useNavStore } from "../store/nav-store";
 
 export const useUserChats = () => {
-  const { setCurrentUserChat } = useUserChatStore();
+  const { currentNavState, setCurrentNavState } = useNavStore();
   const queryClient = getQueryClient();
   const router = useRouter();
   const pathname = usePathname();
@@ -43,7 +44,11 @@ export const useUserChats = () => {
     },
     onSettled: (data, error, variables) => {
       if (!error && data) {
-        setCurrentUserChat(data);
+        setCurrentNavState({
+          rootTitle: "Chats",
+          title: data.title as string,
+          object: data,
+        });
       }
       queryClient.invalidateQueries({ queryKey: ["getUserChats"] });
     },
@@ -75,9 +80,11 @@ export const useUserChats = () => {
         });
 
         if (pathname.includes(thread_id)) {
-          setCurrentUserChat(null);
-          router.replace("/chat");
-          router.refresh();
+          if (currentNavState?.rootTitle === "Chats") {
+            setCurrentNavState(null);
+            router.replace("/chat");
+            router.refresh();
+          }
         }
         return { previousChats };
       },

@@ -11,8 +11,7 @@ import { MultimodalInput } from "./multimodal-input";
 import { Overview } from "./overview";
 import { Chat as ChatType } from "@/shared/services/types/chat";
 import { useUserChats } from "@/shared/hooks/use-user-chats";
-import { useUserChatStore } from "@/shared/store/chat-store";
-import { usePathname } from "next/navigation";
+import { useNavStore } from "@/shared/store/nav-store";
 import { useChatStateModifierStore } from "@/shared/store/chat-state-modifier-store";
 import { StrategyDraftEditForm } from "./strategy-draft-edit-form";
 import { StrategyDraft } from "@/shared/services/types/strategy-draft";
@@ -23,14 +22,12 @@ import { toast } from "sonner";
 
 export function Chat({ chat }: { chat: ChatType }) {
   const { mutateUpdateChat, mutateAddChat } = useUserChats();
-  const { setCurrentUserChat } = useUserChatStore();
+  const { setCurrentNavState } = useNavStore();
   const { chatModifier } = useChatStateModifierStore();
   const [firstLoad, setFirstLoad] = useState(true);
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
-
-  const pathname = usePathname();
 
   let isNewChat = false;
 
@@ -65,7 +62,11 @@ export function Chat({ chat }: { chat: ChatType }) {
       setInput("");
       setAttachments([]);
       setFirstLoad(true);
-      setCurrentUserChat(chat);
+      setCurrentNavState({
+        rootTitle: "Chats",
+        title: "New Chat",
+        object: chat,
+      });
     }
   }, [chat.thread_id]);
 
@@ -78,7 +79,11 @@ export function Chat({ chat }: { chat: ChatType }) {
       block: "end",
     });
 
-    setCurrentUserChat(chat);
+    setCurrentNavState({
+      rootTitle: "Chats",
+      title: chat.title || "New Chat",
+      object: chat,
+    });
 
     if (!isLoading && messages.length > 0) {
       const chatTitle = chat.title || messages[0].content;

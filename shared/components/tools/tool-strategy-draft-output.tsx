@@ -35,6 +35,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import React, { useEffect, useRef } from "react";
 import { useStrategyDraft } from "@/shared/contexts/strategy-draft-context";
+import Link from "next/link";
 
 // Extract descriptions
 const strategyDraftDescriptions = getStrategyDraftDescriptions();
@@ -163,12 +164,12 @@ export const ToolStrategyDraftOutput = ({
         </Collapsible>
         <CardFooter className="flex justify-start gap-2">
           {strategyExists ? (
-            <a href={`/strategies/${strategyDraft.strategy_id}`}>
+            <Link href={`/strategies/${strategyDraft.strategy_id}`}>
               <Button variant="outline">
                 <Eye strokeWidth={1.1} />
                 View
               </Button>
-            </a>
+            </Link>
           ) : (
             <>
               <Button

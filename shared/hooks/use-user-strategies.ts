@@ -3,12 +3,18 @@ import { API } from "../services/api-client";
 import { StrategyDraft } from "../services/types/strategy-draft";
 import { Strategy, StrategyListItem } from "../services/types/strategy";
 import { getQueryClient } from "../lib/use-query/get-query-client";
-import { useUserChatStore } from "../store/chat-store";
+import { useNavStore } from "../store/nav-store";
 import { toast } from "sonner";
+import { ChatListItem } from "../services/types/chat";
 
 export const useUserStrategies = () => {
   const queryClient = getQueryClient();
-  const { currentUserChat } = useUserChatStore();
+  const { currentNavState } = useNavStore();
+
+  const currentChat =
+    currentNavState?.rootTitle === "Chats"
+      ? (currentNavState.object as ChatListItem)
+      : null;
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["strategies"],
@@ -19,13 +25,14 @@ export const useUserStrategies = () => {
     },
   });
 
+  // Called within a chat
   const {
     mutateAsync: mutateCreateStrategyFromDraft,
     isPending: isPendingCreateStrategyFromDraft,
   } = useMutation({
     mutationKey: ["strategies", "add"],
     mutationFn: async (strategy_draft: StrategyDraft) => {
-      strategy_draft.chat_id = currentUserChat?.id;
+      strategy_draft.chat_id = currentChat?.id;
       const response = await API.strategies.createStrategyFromDraft(
         strategy_draft
       );
